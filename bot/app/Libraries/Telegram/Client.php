@@ -23,12 +23,17 @@ use Libraries\Logger;
 
 use Telegram\{Updates};
 use Telegram\Traits\{
-    Tools
+    Tools,
+    Start,
+    Help,
+    On,
+    Hears,
+    Command
 };
 
 class Client {
 
-    use Tools;
+    use Tools, Start, Help, On, Hears, Command;
     
     /**
      * @var object
@@ -479,53 +484,5 @@ class Client {
      */
     public static function tools(): self {
         return new self;
-    }
-
-    /**
-     * It checks if the update type is the same as the one you passed in the first parameter, and if it
-     * is, it calls the function you passed in the second parameter.
-     * 
-     * @param string type The type of update you want to listen for.
-     * @param callable data The data that is sent to the server.
-     */
-    public static function on(string|array $type, callable $data) {
-        if(is_array($type) && in_array(Updates::getUpdateType(), $type) || 
-            Updates::getUpdateType() == $type
-        ) {
-            if($data) {
-                exit($data(new self));
-            }
-        }
-    }
-
-    /**
-     * It checks if the command exists, and if it does, it runs the callback function.
-     * 
-     * @param string value The command you want to use.
-     * @param callable data The data that is passed to the command.
-     */
-    public static function command(string $value, callable $data) {
-        if(self::getCommand($value)) {
-            if($data) {
-                exit($data(new self, self::getTextParams()));
-            }
-        }
-    }
-    
-    /**
-     * It checks if the message contains a certain word, and if it does, it calls the callback
-     * function.
-     * 
-     * Now, let's see how we can use it:
-     * 
-     * @param string word The word you want to listen for.
-     * @param callable data The data that you want to send to the user.
-     */
-    public static function hears(string $word, callable $data) {
-        if(str_contains(Updates::text(), $word)) {
-            if($data) {
-                exit($data(new self, $word));
-            }            
-        }
-    }
+    }    
 }
