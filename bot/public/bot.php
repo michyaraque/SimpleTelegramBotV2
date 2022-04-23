@@ -10,8 +10,12 @@ $dotenv->load();
 
 Bot::create(env("TELEGRAM_API_KEY"));
 
-Bot::command('start', function($context) {
+Bot::start(function($context) {
     $context::sendMessage(Updates::chatId(), "Hey");
+});
+
+Bot::help(function($context) {
+    $context::sendMessage(Updates::chatId(), "Esto es un mensaje de ayuda");
 });
 
 Bot::command('frasquito', function($context, $parameters) {
@@ -35,7 +39,10 @@ Bot::on(UpdateType::PHOTO, function($context) {
     $context::sendMessage(Updates::chatId(), "Esto es una foto");
 });
 
-Bot::hears('hello', function($context, $word) {
+Bot::hears([
+        'text' => 'hello',
+        'capital' => 'lowercase'
+    ], function($context, $word) {
     $keyboard = new InlineKeyboard;
     $keyboard->inlineKeyboardButton('Click me', "callback");
     $keyboard->inlineKeyboardButton('Click me derecha', "callback2")->endRow();
@@ -44,6 +51,10 @@ Bot::hears('hello', function($context, $word) {
     $context->sendMessage(Updates::chatId(), "He oido que has dicho {$word}", [
         'reply_markup' => $keyboard->inlineKeyboardMarkup()
     ]);
+});
+
+Bot::hears('/([\w\-\.]+@([\w-]+\.)+[\w-]{2,4}$)/', function($context, $word) {
+    $context->sendMessage(Updates::chatId(), "He oido que has dicho {$word}");
 });
 
 //bot::run()::Polling();
